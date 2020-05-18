@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Core.Interfaces;
 
 namespace API
 {
@@ -29,7 +30,10 @@ namespace API
         {
             services.AddControllers();
             services.AddDbContext<StoreContext>(options =>
-        options.UseSqlServer(_config.GetConnectionString("DefaultConnection")));
+        options.UseSqlite(_config.GetConnectionString("DefaultConnection")));
+         //     services.AddDbContext<StoreContext>(options =>
+        // options.UseSqlite(_config.GetConnectionString("DefaultConnection")));
+        services.AddScoped<IProductRepository , ProductRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
