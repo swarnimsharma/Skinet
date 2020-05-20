@@ -13,6 +13,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Core.Interfaces;
+using API.Helpers;
+using AutoMapper;
 
 namespace API
 {
@@ -30,10 +32,10 @@ namespace API
         {
             services.AddControllers();
             services.AddDbContext<StoreContext>(options =>
-        options.UseSqlite(_config.GetConnectionString("DefaultConnection")));
-         //     services.AddDbContext<StoreContext>(options =>
-        // options.UseSqlite(_config.GetConnectionString("DefaultConnection")));
-        services.AddScoped<IProductRepository , ProductRepository>();
+            options.UseSqlite(_config.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
+            services.AddAutoMapper(typeof(MappingProfiles));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,6 +49,7 @@ namespace API
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseStaticFiles();
 
             app.UseAuthorization();
 
