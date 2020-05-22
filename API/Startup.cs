@@ -33,7 +33,14 @@ namespace API
             services.AddAutoMapper(typeof(MappingProfiles));
             services.AddSwaggerGen(c =>
             {
-              c.SwaggerDoc("v1" , new OpenApiInfo{Title = "Skinet API" , Version = "v1"});
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Skinet API", Version = "v1" });
+            });
+            services.AddCors(opt =>
+            {
+                opt.AddPolicy("CorsPolicy", policy =>
+                {
+                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
+                });
             });
         }
 
@@ -46,10 +53,10 @@ namespace API
 
             app.UseRouting();
             app.UseStaticFiles();
-
+            app.UseCors("CorsPolicy");
             app.UseAuthorization();
             app.UseSwagger();
-            app.UseSwaggerUI(c => {c.SwaggerEndpoint("/swagger/v1/swagger.json", "Skinet Api v1");});
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Skinet Api v1"); });
 
             app.UseEndpoints(endpoints =>
             {
