@@ -19,7 +19,7 @@ export class ShopComponent implements OnInit {
   totalCount: number;
   sortOptions = [
     { name: 'Alphabetical', value: 'name' },
-    { name: 'Price:Low to High', value: 'priceAsc'},
+    { name: 'Price:Low to High', value: 'priceAsc' },
     { name: 'High to Low', value: 'priceDesc' },
   ];
 
@@ -42,6 +42,7 @@ export class ShopComponent implements OnInit {
       }
     );
   }
+
   getBrands() {
     this.shopservice.getBrands().subscribe(
       (response) => {
