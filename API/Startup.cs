@@ -10,6 +10,7 @@ using API.Helpers;
 using AutoMapper;
 using API.Middleware;
 using Microsoft.OpenApi.Models;
+using StackExchange.Redis;
 
 namespace API
 {
@@ -28,8 +29,14 @@ namespace API
             services.AddControllers();
             services.AddDbContext<StoreContext>(options =>
             options.UseSqlite(_config.GetConnectionString("DefaultConnection")));
+            services.AddSingleton<IConnectionMultiplexer>(c =>
+            {
+                var configuration = ConfigurationOptions.Parse(_config.GetConnectionString("Redis"), true);
+                return ConnectionMultiplexer.Connect(configuration);
+            });
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
+            services.AddScoped<IBasketRepository, BasketRepository>();
             services.AddAutoMapper(typeof(MappingProfiles));
             services.AddSwaggerGen(c =>
             {
@@ -42,6 +49,7 @@ namespace API
                     policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
                 });
             });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,7 +58,6 @@ namespace API
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseStatusCodePagesWithReExecute("/errors/{0}");
             app.UseHttpsRedirection();
-
             app.UseRouting();
             app.UseStaticFiles();
             app.UseCors("CorsPolicy");
